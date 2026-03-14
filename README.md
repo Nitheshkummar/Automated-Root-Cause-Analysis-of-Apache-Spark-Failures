@@ -33,14 +33,9 @@ The entire infrastructure runs on **Docker Compose** with a Hadoop/YARN cluster,
 | **ML Library** | Spark MLlib (Scala) + PySpark ML (Python) |
 | **Data Benchmark** | TPC-H (25GB scale) |
 | **Build Tool** | sbt 1.9.7 |
-| **Database** | MongoDB 6 (metadata) |
 | **Notebook** | Jupyter (via python-lab container) |
 
 ---
-
-
-
-
 
 ## 🚦 Quick Start
 
@@ -184,42 +179,6 @@ Extracted per-application by `FeatureExtractor.scala` from aggregated task metri
 | **Derived Features (9)** | `skew_index`, `duration_variance`, `max_min_duration_ratio`, `spill_ratio`, `disk_spill_ratio`, `peak_memory_ratio`, `gc_time_ratio`, `network_pressure`, `shuffle_write_ratio` |
 
 ---
-
-
-PREDICTIONS
-+----------------------+-------------------+-------+------------------+
-|app_id                |root_cause_stage_id|predict|predicted_label   |
-+----------------------+-------------------+-------+------------------+
-|app_1234567890_0001   |5                  |1.0    |OUT_OF_MEMORY     |
-+----------------------+-------------------+-------+------------------+
-```
-
----
-
-## 🔧 Configuration
-
-### HDFS Paths (SparkConfig.scala)
-
-```scala
-object Paths {
-  val HDFS_BASE = "hdfs://namenode:8020/project"
-  val TPCH_PARQUET = s"$HDFS_BASE/parquet"
-  val EVENT_LOGS = s"$HDFS_BASE/spark-logs"
-  val ML_MODELS = s"$HDFS_BASE/models"
-  val PREPROCESS = s"$HDFS_BASE/preprocess"
-}
-```
-
-### YARN Tuning
-
-The capacity scheduler's `maximum-am-resource-percent` may need to be increased for running many concurrent jobs:
-
-```bash
-# On resourcemanager container
-docker exec resourcemanager bash -c \
-  "sed -i 's/<value>0.1<\/value>/<value>0.8<\/value>/' /etc/hadoop/capacity-scheduler.xml"
-docker exec resourcemanager yarn rmadmin -refreshQueues
-```
 
 ## ⚠️ Limitations
 - Requires Spark event logging to be enabled
