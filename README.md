@@ -38,81 +38,9 @@ The entire infrastructure runs on **Docker Compose** with a Hadoop/YARN cluster,
 
 ---
 
-## 📁 Project Structure
 
-```
-project/                                   # Root (Docker Compose level)
-├── docker-compose.yaml                    # Full cluster: HDFS, YARN, Spark, MongoDB, Jupyter
-├── hadoop-config/                         # Hadoop XML configs mounted into containers
-├── spark_rca_ml.py                        # Python ML pipeline (RF, DT, LR classifiers)
-├── spark_rca_ml.ipynb                     # Jupyter notebook version of Python ML pipeline
-│
-└── spark-rca-project/                     # Scala SBT project
-    ├── build.sbt                          # Build config (Spark 3.5.1, Scala 2.12.18)
-    ├── project/
-    │   ├── build.properties               # sbt version (1.9.7)
-    │   └── plugins.sbt                    # sbt-assembly plugin
-    ├── src/main/
-    │   ├── resources/
-    │   │   └── log4j.properties           # Logging configuration
-    │   └── scala/com/sparkrca/
-    │       ├── config/
-    │       │   └── SparkConfig.scala      # Centralized HDFS paths & Spark session factory
-    │       ├── datalake/
-    │       │   ├── HDFSUtils.scala        # HDFS file ops (exists, list, size, delete)
-    │       │   └── TPCHParquetConverter.scala  # TPC-H text→Parquet with full schemas
-    │       ├── injection/
-    │       │   ├── CampaignRunner.scala   # Orchestrator: submits 80 YARN jobs via SparkLauncher
-    │       │   ├── FailureScenarios.scala # Sealed trait hierarchy for 7 failure types
-    │       │   └── TPCHFailureSuite.scala # Actual failure injection logic per scenario
-    │       ├── preprocessing/
-    │       │   ├── LogParser.scala        # Parses ZSTD-compressed Spark event logs (Jackson)
-    │       │   ├── DAGBuilder.scala       # Reconstructs stage DAG from event logs
-    │       │   ├── PropagationAnalyzer.scala  # Reverse BFS root cause identification
-    │       │   └── FeatureExtractor.scala # Extracts 25 ML features per application
-    │       ├── ml/
-    │       │   ├── RCAClassifier.scala    # Random Forest classifier (Scala MLlib)
-    │       │   └── ModelEvaluator.scala   # Per-class precision/recall/F1, confusion matrix
-    │       ├── Main.scala                 # CLI entry point (convert/inject/preprocess/train/predict)
-    │       ├── PreprocessRunner.scala     # Standalone preprocessing pipeline runner
-    │       └── TestRunner.scala           # Module-by-module test harness (11 tests)
-    ├── scripts/
-    │   ├── generate_tpch_data.ps1         # TPC-H data generation (PowerShell/Windows)
-    │   ├── ingest_to_hdfs.sh              # Upload raw TPC-H data to HDFS
-    │   └── submit_spark_job.sh            # YARN job submission helper
-    └── docs/
-        └── architecture.md                # Detailed architecture with Mermaid diagrams
-```
 
----
 
-## 🐳 Docker Infrastructure
-
-The project runs on a fully containerized cluster defined in `docker-compose.yaml`:
-
-| Container | Image | Purpose |
-|-----------|-------|---------|
-| `namenode` | bde2020/hadoop-namenode | HDFS NameNode (Web UI: 9870) |
-| `datanode` | bde2020/hadoop-datanode | HDFS DataNode (Web UI: 9864) |
-| `resourcemanager` | bde2020/hadoop-resourcemanager | YARN Resource Manager (Web UI: 8088) |
-| `nodemanager` | bde2020/hadoop-nodemanager | YARN Node Manager |
-| `historyserver` | bde2020/hadoop-historyserver | MapReduce History Server |
-| `spark-master` | apache/spark:3.5.1 | Spark Master |
-| `spark-shell` | apache/spark:3.5.1 | Spark client for job submission |
-| `spark-worker-1/2` | apache/spark:3.5.1 | Spark Workers |
-| `spark-worker-weak` | apache/spark:3.5.1 | Resource-constrained worker (for failure variation) |
-| `mongodb` | mongo:6 | Metadata storage |
-| `python-lab` | jupyter/pyspark-notebook | Jupyter + PySpark for ML analysis |
-
-```bash
-# Start the full cluster
-docker compose up -d
-
-# Verify HDFS is healthy
-docker exec namenode hdfs dfsadmin -report
-```
-
----
 
 ## 🚦 Quick Start
 
@@ -257,22 +185,6 @@ Extracted per-application by `FeatureExtractor.scala` from aggregated task metri
 
 ---
 
-## 📈 Sample Output
-
-```
-╔══════════════════════════════════════════════════════════════════╗
-║     SPARK ROOT CAUSE ANALYSIS (RCA) PROJECT                      ║
-╚══════════════════════════════════════════════════════════════════╝
-
-ROOT CAUSE ANALYSIS RESULT
-============================================================
-Application: application_1234567890_0001
-Root Cause Stage: 5 (Exchange SinglePartition)
-Failure Reason: Container killed by YARN for excess memory
-Propagation Path: 5 → 7 → 9
-Victim Stages: 7, 9
-Analysis Confidence: 85.0%
-============================================================
 
 PREDICTIONS
 +----------------------+-------------------+-------+------------------+
@@ -333,4 +245,7 @@ This project is for academic purposes.
 
 ## 👥 Authors
 
-Big Data Project - Semester 6
+Jainithissh S       & CB.SC.U4AIE23129 
+Krishna Prakash S   & CB.SC.U4AIE23138 
+Nitheshkummar C     & CB.SC.U4AIE23155 
+Akhilesh Kumar S    & CB.SC.U4AIE23170 
