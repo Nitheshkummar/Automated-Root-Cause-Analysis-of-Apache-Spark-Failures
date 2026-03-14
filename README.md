@@ -245,7 +245,7 @@ This project is for academic purposes.
 
 ## 👥 Authors
 
-Jainithissh S       & CB.SC.U4AIE23129 
-Krishna Prakash S   & CB.SC.U4AIE23138 
-Nitheshkummar C     & CB.SC.U4AIE23155 
-Akhilesh Kumar S    & CB.SC.U4AIE23170 
+- Jainithissh S       & CB.SC.U4AIE23129 
+- Krishna Prakash S   & CB.SC.U4AIE23138 
+- Nitheshkummar C     & CB.SC.U4AIE23155
+- Akhilesh Kumar S    & CB.SC.U4AIE23170 
